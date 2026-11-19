@@ -23,9 +23,9 @@ The application is a single **Next.js full-stack** web app that lets customers b
 | Promise | Anti-tarnish coating (exact wording ⏳ — must be supportable by supplier information) |
 | Market | Ships to all Canadian provinces and territories. No local pickup. CAD only. |
 | Fulfilment | Client packs and ships from home using a shipping service (carrier ⏳) |
-| Catalogue at launch | ~20 products, ~3 units each, 6 categories |
+| Catalogue at launch | ~20 products, ~3 units each, 6 categories (✅ final names in §5.1 FR-2); a product may belong to several categories |
 | Legal / tax | Business registration expected early December 2026. GST/HST status ⏳. No Stripe account yet. |
-| Ownership | ✅ The business owns Stripe, domain, business email and hosting; developer is invited as a collaborator. |
+| Ownership | ✅ The business owns Stripe, domain, business email and hosting; developer is invited as a collaborator. All service accounts (Vercel, Neon, Cloudinary, Resend, Stripe) are registered with the business's Gmail account. |
 
 ## 3. Project objectives
 
@@ -46,7 +46,18 @@ The application is a single **Next.js full-stack** web app that lets customers b
 
 ### 5.1 Storefront (customers)
 - FR-1 Homepage: hero, featured categories, best sellers, brand story, trust points (anti-tarnish, shipping across Canada), announcement bar.
-- FR-2 Category (collection) pages for the 6 categories with sort (newest, price) and a simple "in stock" filter.
+- FR-2 Category (collection) pages at `/collections/<slug>` with sort (newest, price) and a simple "in stock" filter. ✅ Final categories:
+
+  | Name | Slug |
+  |---|---|
+  | Jewellery Sets | `sets` |
+  | Earrings | `earrings` |
+  | Bridal | `bridal` |
+  | Rings | `rings` |
+  | Hair Accessories | `hair-accessories` |
+  | Mystery Boxes | `mystery-boxes` |
+
+  A product can appear in more than one category (e.g. a bridal necklace set is in both Jewellery Sets and Bridal).
 - FR-3 Product detail page: image gallery, price in CAD, stock state ("Only 1 left", "Sold out"), ring size selector (rings only), structured specifications (base metal, finish/plating, dimensions, weight where known, care), mystery box contents list, shipping & policy summary.
 - FR-4 Cart: add/remove/change quantity, persisted in the browser, shows subtotal and shipping note; quantities capped by available stock.
 - FR-5 Checkout via Stripe Checkout (hosted) in CAD; collect email, name, phone, Canadian shipping address; flat shipping rates; terms-of-service consent checkbox.
@@ -180,7 +191,9 @@ All money stored as **integer cents (CAD)** — never floats.
 
 **Category** — `id, slug (unique), name, description, sortOrder, isActive`
 
-**Product** — `id, slug (unique), name, categoryId → Category, description, priceCents, baseMaterial, finish (plating), dimensions, weightGrams?, careNotes?, contents[]? (mystery boxes), isActive, isFeatured, createdAt, updatedAt`
+**ProductCategory** (join table, many-to-many) — `productId → Product, categoryId → Category, sortOrder` · primary key `(productId, categoryId)` · `sortOrder` lets each collection page order its products independently.
+
+**Product** — `id, slug (unique), name, description, priceCents, baseMaterial, finish (plating), dimensions, weightGrams?, careNotes?, contents[]? (mystery boxes), isActive, isFeatured, createdAt, updatedAt`
 
 **ProductImage** — `id, productId → Product, cloudinaryPublicId, alt, sortOrder`
 
@@ -456,6 +469,15 @@ Maintained in **`docs/interview-notes.md`** (created in Phase 2), updated after 
 | P9 | Vercel team (business-owned, Pro) | Client + developer | Dec 1 |
 | P10 | ~~Logo files~~ ✅ Received 2026-11-19 (transparent PNGs, final) | — | — |
 | P11 | Google account(s) allowed into admin | Client | Dec 8 |
-| P12 | Product data + photos for ~20 products, ring sizes per ring | Client + developer | Dec 3 |
+| P12 | Product data + photos for ~20 products, ring sizes per ring (4–6 early sample photos promised for 2026-11-20 to design with) | Client + developer | Dec 3 |
 | P13 | Announcement bar text, social links, About-us story text | Client | Dec 5 |
-| P14 | Confirm 🟡 tech choices: Tailwind, Prisma, Zod, Cloudinary, Resend, Auth.js+Google, Vercel Pro, Neon | Developer | Plan approval |
+| P14 | ~~Confirm tech choices~~ ✅ Confirmed 2026-11-19 | — | — |
+| P15 | Vercel Pro billing starts at first deploy (~Nov 26, ~US$20/month) — client informed? | Client | Nov 26 |
+
+## 24. Development workflow
+
+- **Git is operated manually by the developer.** Claude Code inspects Git state read-only and hands off exact commands; see `CLAUDE.md` for the full rule.
+- Feature branches (`feature/…`, `fix/…`, `docs/…`, `chore/…`) → push → Pull Request → review Vercel preview → developer merges into `main`.
+- `main` stays deployable at all times; Vercel deploys `main` to production.
+- Conventional Commit messages; small, coherent commits, pushed frequently.
+- Defaults: npm, Node 24 LTS, Neon `dev` branch for local development.
