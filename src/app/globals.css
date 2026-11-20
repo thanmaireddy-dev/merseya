@@ -1,3 +1,44 @@
 @import "tailwindcss";
 
-/* Brand design tokens (colours and fonts) are added in the next task. */
+/*
+ * Merseya design tokens (plan.md §14).
+ * Tailwind v4 reads `@theme` and generates utilities from it:
+ *   --color-plum   → bg-plum, text-plum, border-plum …
+ *   --font-display → font-display
+ * Change a colour here and the whole site updates.
+ */
+@theme {
+  /* Brand palette */
+  --color-plum: #683844; /* brand colour, headings, links */
+  --color-rose: #b77d84; /* accents & borders only (≈3:1 on ivory, not for body text) */
+  --color-blush: #f0dde1; /* soft section backgrounds */
+  --color-ivory: #f7f3ef; /* main background */
+  --color-deep-plum: #422133; /* primary buttons, footer, premium sections */
+  --color-charcoal: #30272b; /* body text */
+
+  /* Fonts: the CSS variables are created by next/font in layout.tsx */
+  --font-display: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    /* Sticky header must not cover the target of in-page links */
+    scroll-padding-top: 8rem;
+  }
+
+  body {
+    @apply bg-ivory font-sans text-charcoal antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-plum;
+  }
+
+  /* Visible, on-brand keyboard focus for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-plum;
+  }
+}
