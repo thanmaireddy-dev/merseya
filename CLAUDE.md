@@ -1,6 +1,12 @@
 # CLAUDE.md: instructions for Claude Code sessions on Merseya
 
 Merseya Jewellery is a real e-commerce store for an Ontario jewellery business: Next.js full-stack, TypeScript, PostgreSQL (Neon) with Prisma, and Stripe Checkout, hosted on Vercel.
+@AGENTS.md
+
+**Next.js version:** 16.4 with `cacheComponents` enabled, which may differ from your training data. Check the bundled docs in `node_modules/next/dist/docs/` before writing Next.js code. `AGENTS.md` is maintained by `next dev`; never edit it by hand.
+
+**Progress is tracked by phase and task IDs (`plan.md` §18), never by dates.** Before a task that needs an external service, remind the developer of that phase's setup prerequisites.
+
 **`plan.md` is the source of truth** for scope, architecture, schema, roadmap and open decisions. Read the relevant section before starting a task, and update `plan.md` when a decision changes. Don't duplicate it here.
 
 ---
