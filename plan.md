@@ -126,7 +126,7 @@ Orders admin (FR-9 → FR-12). **Fallback:** client works from the new-order ema
 | Styling | **Tailwind CSS** with brand tokens defined in CSS | 🟡 | Fast, consistent styling; tokens map to the brand palette |
 | Fonts | **Cormorant Garamond** (headings), **DM Sans** (body) via `next/font` | ✅ | Self-hosted at build time, no layout shift |
 | Database | **PostgreSQL** on **Neon** | ✅ / 🟡 | Relational data + transactions; Neon = managed, branching for dev/preview |
-| ORM | **Prisma** | 🟡 | Schema, migrations, generated types |
+| ORM | **Prisma 7.10.1** (pinned exactly) + `@prisma/adapter-pg` | ✅ | Schema, migrations, generated types. Pinned because npm's `latest` tag pointed at an 8.0 release candidate |
 | Validation | **Zod** | 🟡 | Validate catalogue data, server action input, env vars |
 | Payments | **Stripe Checkout** (hosted) + webhooks | ✅ | Card handling, 3-D Secure, Apple/Google Pay |
 | Tax | Stripe Tax *or* no tax | ⏳ | Depends on GST/HST registration (accountant) |
@@ -385,7 +385,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | 2.1 | Scaffold Next.js 16 + TypeScript + Tailwind | ✅ |
 | 2.2 | Brand tokens, fonts, favicon, layout shell (announcement bar, header, footer), `(shop)` route group | ✅ |
 | 2.3 | Environment config: `.env.example` + Zod-validated env module | ✅ |
-| 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ⬜ |
+| 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ✅ |
 | 2.5 | Catalogue file + `catalog:sync` and `stock:adjust` scripts; image upload to Cloudinary; load the sample products | ⬜ |
 | 2.6 | Vercel import + first preview deploy; `README.md`; start `docs/interview-notes.md` | ⬜ |
 
@@ -504,6 +504,7 @@ No launch until all are true:
 | Holiday shipping cut-offs | High | Customer complaints | Show delivery estimates and a holiday cut-off notice |
 | Next.js caching surprises | Medium | Stale prices/stock shown | Stock/price always re-checked at checkout; explicit revalidation |
 | Client home address exposure | Medium | Privacy | Ask advisor about required business address; consider PO box |
+| `npm audit`: 3 high (ReDoS in `effect`, pulled in only by the Prisma **CLI** dev tool) | Low | None at runtime: not in the deployed app | Re-check on each Prisma upgrade; never "fix" by downgrading to Prisma 6 |
 
 ## 21. Learning objectives (developer)
 
