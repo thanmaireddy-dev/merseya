@@ -278,15 +278,18 @@ Flat-rate options defined in code/config (e.g. "Standard tracked — Canada", fr
 
 ## 14. UI/UX and branding requirements
 
-### 14.1 Tokens
-| Token | HEX | Use |
-|---|---|---|
-| `plum` | #683844 | Brand colour, headings, links |
-| `rose` | #B77D84 | Accents, borders, large display text only (≈3:1 on ivory — **not for body text**) |
-| `blush` | #F0DDE1 | Soft section backgrounds |
-| `ivory` | #F7F3EF | Main background (dominant) |
-| `deep-plum` | #422133 | Primary buttons, footer, premium sections — used sparingly |
-| `charcoal` | #30272B | Body text |
+### 14.1 Tokens & colour direction
+Merseya is a **plum, blush-pink and ivory** brand. Blush must be clearly visible, not just a tiny accent. The full rules, contrast limits and things to avoid are in `CLAUDE.md` §4.
+
+| Token | HEX | Use | Approx. share |
+|---|---|---|---|
+| `ivory` | #F7F3EF | Main background | ~35% |
+| `blush` | #F0DDE1 | Section bands, panels, badges, mobile menu | ~25% |
+| `rose` | #B77D84 | Borders, underlines, hover states, icons, large display accents (**never small text**) | ~15% |
+| `plum` | #683844 | Brand colour, headings, links | ~15% |
+| `deep-plum` | #422133 | Primary buttons, footer, campaign sections | ~7% |
+| `charcoal` | #30272B | Body text | — |
+| `champagne` | #C6A477 | Restrained gold details (text only on deep plum) | ~3% |
 
 ### 14.2 Typography
 Cormorant Garamond for headings/display; DM Sans for body, UI, prices; restrained uppercase DM Sans with letter-spacing for labels.
@@ -381,7 +384,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 |---|---|---|
 | 2.1 | Scaffold Next.js 16 + TypeScript + Tailwind | ✅ |
 | 2.2 | Brand tokens, fonts, favicon, layout shell (announcement bar, header, footer), `(shop)` route group | ✅ |
-| 2.3 | Environment config: `.env.example` + Zod-validated env module | ⬜ |
+| 2.3 | Environment config: `.env.example` + Zod-validated env module | ✅ |
 | 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ⬜ |
 | 2.5 | Catalogue file + `catalog:sync` and `stock:adjust` scripts; image upload to Cloudinary; load the sample products | ⬜ |
 | 2.6 | Vercel import + first preview deploy; `README.md`; start `docs/interview-notes.md` | ⬜ |
