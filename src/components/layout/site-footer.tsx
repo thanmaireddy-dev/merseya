@@ -21,7 +21,8 @@ async function CopyrightYear() {
 function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
   return (
     <div>
-      <h2 className="font-sans text-xs font-medium tracking-[0.2em] text-blush uppercase">
+      {/* Champagne is readable only on deep plum (6:1), which is why it lives here */}
+      <h2 className="font-sans text-xs font-medium tracking-[0.2em] text-champagne uppercase">
         {title}
       </h2>
       <ul className="mt-4 space-y-2.5">
@@ -29,7 +30,7 @@ function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-sm text-ivory/85 transition-colors hover:text-ivory"
+              className="text-sm text-ivory/85 transition-colors hover:text-blush"
             >
               {link.label}
             </Link>
@@ -61,7 +62,7 @@ export function SiteFooter() {
         <FooterColumn title="About" links={aboutLinks} />
       </div>
 
-      <div className="border-t border-ivory/15">
+      <div className="border-t border-champagne/40">
         <p className="mx-auto max-w-7xl px-6 py-6 text-xs text-ivory/70 md:px-8">
           © <CopyrightYear /> Merseya Jewellery. All prices in CAD.
         </p>

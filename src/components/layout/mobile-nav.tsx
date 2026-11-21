@@ -48,7 +48,7 @@ export function MobileNav() {
         <nav
           id="mobile-menu"
           aria-label="Mobile"
-          className="absolute inset-x-0 top-full border-b border-blush bg-ivory px-6 pt-4 pb-8 shadow-sm"
+          className="absolute inset-x-0 top-full border-b border-rose/40 bg-blush px-6 pt-4 pb-8"
         >
           <ul className="space-y-1">
             {categoryLinks.map((link) => (
@@ -63,7 +63,7 @@ export function MobileNav() {
               </li>
             ))}
           </ul>
-          <ul className="mt-6 space-y-1 border-t border-blush pt-6">
+          <ul className="mt-6 space-y-1 border-t border-rose/50 pt-6">
             {helpLinks.map((link) => (
               <li key={link.href}>
                 <Link

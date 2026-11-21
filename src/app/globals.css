@@ -15,6 +15,7 @@
   --color-ivory: #f7f3ef; /* main background */
   --color-deep-plum: #422133; /* primary buttons, footer, premium sections */
   --color-charcoal: #30272b; /* body text */
+  --color-champagne: #c6a477; /* restrained gold details; text ONLY on deep-plum (6:1) */
 
   /* Fonts: the CSS variables are created by next/font in layout.tsx */
   --font-display: var(--font-cormorant), "Times New Roman", serif;

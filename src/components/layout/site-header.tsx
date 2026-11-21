@@ -50,9 +50,10 @@ export function SiteHeader() {
         <ul className="mx-auto flex max-w-7xl justify-center gap-8 px-8 pb-3 text-xs font-medium tracking-[0.18em] uppercase">
           {categoryLinks.map((link) => (
             <li key={link.href}>
+              {/* Rose underline on hover: rose is a UI line here, never small text */}
               <Link
                 href={link.href}
-                className="text-charcoal transition-colors hover:text-plum"
+                className="border-b border-transparent pb-1 text-charcoal transition-colors duration-200 hover:border-rose hover:text-plum"
               >
                 {link.label}
               </Link>
