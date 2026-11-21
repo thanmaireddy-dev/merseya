@@ -30,6 +30,10 @@ const serverEnvSchema = z.object({
   DATABASE_URL: postgresUrl,
   // Direct connection (no "-pooler"): used by Prisma for migrations.
   DATABASE_URL_UNPOOLED: postgresUrl,
+
+  // Task 2.5: Cloudinary. The app only needs the (public) cloud name to build
+  // image URLs. The API key and secret are used by `catalog:sync` only.
+  CLOUDINARY_CLOUD_NAME: z.string().min(1),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

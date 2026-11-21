@@ -375,7 +375,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 |---|---|---|---|---|
 | 2.1 | GitHub repo + `gh` signed in | Developer | — | ✅ |
 | 2.4 | Neon project `Merseya` (AWS US East 2, Ohio), branches `production` and `dev` | Developer (business Gmail) | Branch names only; connection strings go into `.env` | ✅ |
-| 2.5 | Cloudinary account | Developer (business Gmail) | Cloud name; the API key and secret go into `.env` | ⬜ |
+| 2.5 | Cloudinary account | Developer (business Gmail) | Cloud name; the API key and secret go into `.env` | ✅ |
 | 2.5 | Real photos and details for the first sample products | Client → developer | Photos stored locally (not committed) | ✅ photos ready |
 | 2.6 | Vercel account, GitHub connected in Authentication settings | Developer (business Gmail) | Team name | ⬜ |
 
@@ -386,7 +386,8 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | 2.2 | Brand tokens, fonts, favicon, layout shell (announcement bar, header, footer), `(shop)` route group | ✅ |
 | 2.3 | Environment config: `.env.example` + Zod-validated env module | ✅ |
 | 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ✅ |
-| 2.5 | Catalogue file + `catalog:sync` and `stock:adjust` scripts; image upload to Cloudinary; load the sample products | ⬜ |
+| 2.5a | Catalogue file + schema, `catalog:sync` (validate → upload to Cloudinary → per-product transactions) and `stock:adjust`, `--prod` safeguard; 6 categories synced to `dev` | ✅ |
+| 2.5b | Load the client's first real products (photos + verified details) | ⬜ |
 | 2.6 | Vercel import + first preview deploy; `README.md`; start `docs/interview-notes.md` | ⬜ |
 
 - **Deliverable:** a preview URL showing the branded shell; the `dev` database holds the 6 categories and the sample products. One PR for the whole phase.
