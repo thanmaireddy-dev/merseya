@@ -33,9 +33,14 @@ const variantSchema = z.object({
 });
 
 const imageSchema = z.object({
+  // Path inside catalog/photos/, any folder layout, e.g. "earrings/01.jpeg".
+  // Replace the file later (same name) and the next sync uploads the new photo.
   file: z
     .string()
-    .regex(/^[\w-]+\.(jpe?g|png|webp)$/i, "a file name like 01.jpg inside catalog/photos/<product-slug>/"),
+    .regex(
+      /^([\w-]+\/)*[\w-]+\.(jpe?g|png|webp)$/i,
+      'a path inside catalog/photos/ like "earrings/01.jpeg" (forward slashes)',
+    ),
   alt: z.string().min(10, "describe the photo for screen-reader users (10+ characters)"),
 });
 

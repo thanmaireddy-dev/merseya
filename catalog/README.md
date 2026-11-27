@@ -6,11 +6,11 @@ Product **content** lives in `products.ts`, version-controlled. **Photos** live 
 catalog/
   products.ts                       ← one entry per product
   schema.ts                         ← validation rules
-  photos/<product-slug>/01.jpg      ← 01 = main photo, then 02, 03 …
+  photos/<any-folder>/<file>.jpg    ← e.g. photos/earrings/01.jpeg
 ```
 
 ## Add or change a product
-1. Put the photos in `catalog/photos/<product-slug>/` as `01.jpg`, `02.jpg`, and so on.
+1. Put the photos anywhere inside `catalog/photos/` (for example by category) and reference them by path, e.g. `{ file: "earrings/01.jpeg", alt: "…" }`. The first image in the list is the main photo.
 2. Add or edit the entry in `products.ts`.
 3. Run `npm run catalog:sync -- --check`. This validates only and changes nothing.
 4. Run `npm run catalog:sync`. This uploads new photos and updates the **dev** database.
@@ -27,6 +27,9 @@ Production uses `--prod`, which loads `.env.prod` and asks you to type `PRODUCTI
   - `npm run stock:adjust -- <SKU> -1` (damaged)
   - `npm run stock:adjust -- <SKU> =5` (after counting)
 - **Removing** a product from `products.ts` deactivates it on the next sync. Nothing is ever deleted.
+
+## Replacing photos later
+Overwrite the file (same name) or point `file` to a new one, then run the sync. Each Cloudinary ID contains a fingerprint of the file's content (`01-7c0acff8`), so a changed photo is detected, uploaded, and served under a NEW URL (no stale caches).
 
 ## Photo guidelines
 - JPG, PNG or WebP, under 10 MB, ideally at least 1600 px on the longest side.

@@ -8,7 +8,8 @@
 //   2. UPLOAD missing photos to Cloudinary (network calls stay OUTSIDE DB transactions).
 //   3. WRITE each product inside its own database transaction (all or nothing).
 
-import { existsSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { v2 as cloudinary } from "cloudinary";
 import { products as rawProducts } from "../catalog/products";
@@ -37,7 +38,7 @@ function validateCatalogue(): Product[] {
       return;
     }
     for (const img of result.data.images) {
-      const file = path.join(PHOTOS_DIR, result.data.slug, img.file);
+      const file = path.join(PHOTOS_DIR, img.file);
       if (!existsSync(file)) errors.push(`${label} → photo not found: ${file}`);
       else if (statSync(file).size > MAX_BYTES) errors.push(`${label} → photo over 10 MB: ${file}`);
     }
@@ -63,10 +64,15 @@ function validateCatalogue(): Product[] {
 // ─── 2. Upload photos ───────────────────────────────────────────────────────
 async function ensureImages(product: Product, stats: { uploaded: number; reused: number }) {
   const out: UploadedImage[] = [];
-  for (const img of product.images) {
-    // Deterministic ID: the same file always maps to the same Cloudinary asset,
-    // so re-running never creates duplicates.
-    const publicId = `merseya/products/${product.slug}/${path.parse(img.file).name}`;
+  for (const [i, img] of product.images.entries()) {
+    // CONTENT-FINGERPRINTED ID: position + first 8 chars of the file's hash,
+    // e.g. merseya/products/halo-earrings/01-7c0acff8
+    //  - same file            → same ID → already uploaded, skipped
+    //  - photo replaced later → new hash → new ID → uploaded automatically,
+    //    and no browser or CDN can ever show the old cached image.
+    const filePath = path.join(PHOTOS_DIR, img.file);
+    const hash = createHash("md5").update(readFileSync(filePath)).digest("hex").slice(0, 8);
+    const publicId = `merseya/products/${product.slug}/${String(i + 1).padStart(2, "0")}-${hash}`;
     let width: number;
     let height: number;
     try {
@@ -76,10 +82,11 @@ async function ensureImages(product: Product, stats: { uploaded: number; reused:
     } catch (err) {
       const status = (err as { error?: { http_code?: number } }).error?.http_code;
       if (status !== 404) throw err;
-      const uploaded = await cloudinary.uploader.upload(
-        path.join(PHOTOS_DIR, product.slug, img.file),
-        { public_id: publicId, overwrite: false, resource_type: "image" },
-      );
+      const uploaded = await cloudinary.uploader.upload(filePath, {
+        public_id: publicId,
+        overwrite: false,
+        resource_type: "image",
+      });
       ({ width, height } = uploaded);
       stats.uploaded++;
       console.log(`  ↑ uploaded ${publicId}`);
