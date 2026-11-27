@@ -1,7 +1,7 @@
 # Merseya Jewellery — Project Plan
 
-> **Status:** v1 — APPROVED by developer (2026-11-19). 🟡 tech choices in §8 confirmed by approval.
-> **Target launch:** 15 December 2026
+> **Status:** v1, APPROVED by the developer. 🟡 tech choices in §8 confirmed. Progress is tracked by phase (§18), not by date.
+> **Target launch:** 15 December 2026 (business goal)
 > **Owner of this document:** developer (Thanmai). Update it whenever a decision changes.
 >
 > Legend: ✅ Decided · 🟡 Proposed (recommended, not yet confirmed) · ⏳ Pending (blocked on information)
@@ -24,12 +24,12 @@ The application is a single **Next.js full-stack** web app that lets customers b
 | Market | Ships to all Canadian provinces and territories. No local pickup. CAD only. |
 | Fulfilment | Client packs and ships from home using a shipping service (carrier ⏳) |
 | Catalogue at launch | ~20 products, ~3 units each, 6 categories (✅ final names in §5.1 FR-2); a product may belong to several categories |
-| Legal / tax | Business registration expected early December 2026. GST/HST status ⏳. No Stripe account yet. |
+| Legal / tax | Business registration in progress. GST/HST status ⏳. No Stripe account yet. |
 | Ownership | ✅ The business owns Stripe, domain, business email and hosting; developer is invited as a collaborator. All service accounts (Vercel, Neon, Cloudinary, Resend, Stripe) are registered with the business's Gmail account. |
 
 ## 3. Project objectives
 
-1. Launch a **secure, reliable, attractive MVP** on 15 Dec 2026 that can take real payments.
+1. Launch a **secure, reliable, attractive MVP** that can take real payments.
 2. Keep **orders, payments and stock consistent** in the database at all times.
 3. Present products **honestly** (materials, plating, dimensions, care) and build trust.
 4. Let the client fulfil orders **without depending on the developer**.
@@ -65,7 +65,7 @@ The application is a single **Next.js full-stack** web app that lets customers b
 - FR-7 Emails: order confirmation to customer, new-order alert to business, "shipped" email with tracking to customer.
 - FR-8 Content pages: About, Shipping, Returns & Damage Policy, Jewellery Care, Ring Size Guide, FAQ, Contact (email + social links), Privacy Policy, Terms.
 
-### 5.2 Orders admin (client) — ✅ in launch scope (may slip ≤ 1 week, see §18)
+### 5.2 Orders admin (client) — ✅ in launch scope (may follow immediately after launch if needed, see §18 Phase 5)
 - FR-9 Sign in with Google, allowed only for an allowlist of business email addresses.
 - FR-10 Orders list filtered by status (Paid / Shipped / Needs attention / All).
 - FR-11 Order detail + printable packing slip (items, SKU, ring size, quantity, customer name, phone, address).
@@ -97,10 +97,10 @@ The application is a single **Next.js full-stack** web app that lets customers b
 
 ## 7. MVP scope
 
-### 7.1 Must have for launch (15 Dec)
+### 7.1 Must have for launch
 Storefront (FR-1 → FR-8), payments & orders (FR-16 → FR-20), catalogue scripts (FR-13 → FR-15), customer + business emails, legal/policy pages with client-approved text, deployment on the production domain with Stripe live mode.
 
-### 7.2 Launch target, may slip ≤ 1 week
+### 7.2 Launch target, may follow immediately after launch
 Orders admin (FR-9 → FR-12). **Fallback:** client works from the new-order email + Stripe dashboard and emails tracking manually; developer back-fills statuses with a script.
 
 ### 7.3 Deferred (future versions)
@@ -126,7 +126,7 @@ Orders admin (FR-9 → FR-12). **Fallback:** client works from the new-order ema
 | Styling | **Tailwind CSS** with brand tokens defined in CSS | 🟡 | Fast, consistent styling; tokens map to the brand palette |
 | Fonts | **Cormorant Garamond** (headings), **DM Sans** (body) via `next/font` | ✅ | Self-hosted at build time, no layout shift |
 | Database | **PostgreSQL** on **Neon** | ✅ / 🟡 | Relational data + transactions; Neon = managed, branching for dev/preview |
-| ORM | **Prisma** | 🟡 | Schema, migrations, generated types |
+| ORM | **Prisma 7.10.1** (pinned exactly) + `@prisma/adapter-pg` | ✅ | Schema, migrations, generated types. Pinned because npm's `latest` tag pointed at an 8.0 release candidate |
 | Validation | **Zod** | 🟡 | Validate catalogue data, server action input, env vars |
 | Payments | **Stripe Checkout** (hosted) + webhooks | ✅ | Card handling, 3-D Secure, Apple/Google Pay |
 | Tax | Stripe Tax *or* no tax | ⏳ | Depends on GST/HST registration (accountant) |
@@ -278,15 +278,18 @@ Flat-rate options defined in code/config (e.g. "Standard tracked — Canada", fr
 
 ## 14. UI/UX and branding requirements
 
-### 14.1 Tokens
-| Token | HEX | Use |
-|---|---|---|
-| `plum` | #683844 | Brand colour, headings, links |
-| `rose` | #B77D84 | Accents, borders, large display text only (≈3:1 on ivory — **not for body text**) |
-| `blush` | #F0DDE1 | Soft section backgrounds |
-| `ivory` | #F7F3EF | Main background (dominant) |
-| `deep-plum` | #422133 | Primary buttons, footer, premium sections — used sparingly |
-| `charcoal` | #30272B | Body text |
+### 14.1 Tokens & colour direction
+Merseya is a **plum, blush-pink and ivory** brand. Blush must be clearly visible, not just a tiny accent. The full rules, contrast limits and things to avoid are in `CLAUDE.md` §4.
+
+| Token | HEX | Use | Approx. share |
+|---|---|---|---|
+| `ivory` | #F7F3EF | Main background | ~35% |
+| `blush` | #F0DDE1 | Section bands, panels, badges, mobile menu | ~25% |
+| `rose` | #B77D84 | Borders, underlines, hover states, icons, large display accents (**never small text**) | ~15% |
+| `plum` | #683844 | Brand colour, headings, links | ~15% |
+| `deep-plum` | #422133 | Primary buttons, footer, campaign sections | ~7% |
+| `charcoal` | #30272B | Body text | — |
+| `champagne` | #C6A477 | Restrained gold details (text only on deep plum) | ~3% |
 
 ### 14.2 Typography
 Cormorant Garamond for headings/display; DM Sans for body, UI, prices; restrained uppercase DM Sans with letter-spacing for labels.
@@ -338,63 +341,140 @@ All prices to be re-verified on provider sites when accounts are created.
 - **Manual UI checklist:** iPhone Safari + Android Chrome, keyboard-only navigation, contrast, all links/policies.
 - **Live-mode verification:** one real low-value purchase on production, confirm order + emails + stock, then refund it and confirm REFUNDED.
 
-## 18. Development phases & schedule
+## 18. Development phases
 
-Capacity: **~15 h/week** (exams) ≈ **55 hours** until launch. Estimated full scope ≈ **60–65 hours**. ⚠️ The plan is **tight**; mitigations: orders admin may slip ≤ 1 week, homepage v1 kept simple, content text supplied by the client, routine UI scaffolding done quickly so learning time goes to the critical parts (schema, checkout, webhooks, auth).
+Progress is tracked **by phase and task, not by dates.** Each phase lists:
+- the **setup prerequisites** that must be done before the phase (or a specific task) can start;
+- the tasks in order;
+- the deliverable and acceptance criteria;
+- what the developer learns.
 
-| Phase | Dates | Hours | Key deliverables |
-|---|---|---|---|
-| 1. Discovery & planning | Nov 17–21 | — | Approved `plan.md` |
-| 2. Foundation | Nov 21–26 | ~10 | Git/GitHub, Next.js + TS + Tailwind, tokens & fonts, layout shell, Neon + Prisma schema, catalogue sync with dev sample data, first Vercel preview deploy, `CLAUDE.md`, `README.md` |
-| 3. Storefront | Nov 27–Dec 3 | ~14 | Homepage, collection pages, product page (gallery, specs, ring sizes), cart |
-| 4. Checkout & orders | Dec 3–9 | ~16 | `startCheckout`, Stripe Checkout, webhook, inventory, emails, success page; real catalogue loaded (photos/data ~Dec 3); content pages |
-| 5. Orders admin | Dec 8–11 | ~8 | Google sign-in + allowlist, orders list, packing slip, mark shipped |
-| 6. Hardening & launch | Dec 11–15 | ~10 | Test checklists, accessibility/mobile fixes, domain, live keys, live test purchase + refund, go-live |
+Each task is sized for one or two sessions and ends with a Git handoff (see `CLAUDE.md`). The launch target is in the header; when time is short, scope gets cut, never quality.
 
-### Phase details
+Status: ✅ done · 🔄 in progress · ⬜ not started
 
-**Phase 2 — Foundation**
-- Tasks: install `gh`, connect repo, `.gitignore`, brand assets into `docs/brand`; scaffold app; env validation; Prisma schema + first migration on Neon dev branch; catalogue file format + `catalog:sync`; Vercel project linked to GitHub.
-- Acceptance: app runs locally and on a preview URL; `catalog:sync` loads sample data; no secrets in Git.
-- Learn: App Router structure, env vars, Prisma migrations, relational modelling, Git branches/remotes/PRs.
-- Interview: *Why Postgres over MongoDB? Why store money as integer cents? What is a migration? Why every product has a variant?*
-
-**Phase 3 — Storefront**
-- Tasks: design tokens, header/footer/announcement bar, homepage, collection pages, product page, cart (localStorage + server re-validation).
-- Acceptance: browse all categories, view product details, add/remove cart items on mobile and desktop; contrast AA.
-- Learn: Server vs Client Components, data fetching & caching/revalidation, `next/image`, accessibility basics.
-- Interview: *What runs on the server vs the browser? How does caching work in your app? Why is the cart not in the database?*
-
-**Phase 4 — Checkout & orders**
-- Tasks: `startCheckout`, Stripe session config, success page, webhook handler, stock decrement + oversell flag, emails, refund/dispute handling, content pages.
-- Acceptance: full manual payment checklist passes in test mode; duplicate events produce no duplicate effects; closing the tab after paying still yields a PAID order + email.
-- Learn: webhooks, HMAC signatures, idempotency, DB transactions, conditional updates, race conditions.
-- Interview: *Walk through your payment flow. Why not trust the success page? How do you handle duplicate webhooks? What happens if two people buy the last item?*
-
-**Phase 5 — Orders admin**
-- Tasks: Auth.js Google provider, allowlist, protected layout, list/detail/packing slip, `markOrderShipped`.
-- Acceptance: only allowlisted accounts can view `/admin`; non-admins get 403/redirect even calling actions directly; shipped email received.
-- Learn: authentication vs authorisation, OAuth flow, JWT sessions, defence in depth.
-- Interview: *How is the admin protected? Why check auth in the action and not only in middleware?*
-
-**Phase 6 — Hardening & launch**
-- Tasks: run all test checklists, Lighthouse, fix issues, production env vars, domain + DNS + email DNS records (SPF/DKIM), live Stripe keys + live webhook, go-live checklist.
-- Acceptance: go-live checklist (§19) fully ticked.
-- Learn: DNS, email deliverability, production vs preview config, monitoring.
-- Interview: *How did you deploy? How do you keep secrets safe? How would you know if payments broke?*
-
-## 19. Milestones, deliverables & go-live checklist
-
-| Milestone | Target | Deliverable |
+### Overview
+| Phase | Goal | Status |
 |---|---|---|
-| M1 Plan approved | Nov 21 | This document, approved |
-| M2 Foundation live on preview | Nov 26 | Preview URL with layout shell + sample data |
-| M3 Storefront complete | Dec 3 | Browsable catalogue + cart |
-| M4 Test-mode checkout complete | Dec 9 | Paid orders in DB via webhook, emails sent |
-| M5 Orders admin | Dec 11 (≤ Dec 18) | Client can fulfil from `/admin` |
-| M6 Launch | Dec 15 | Live store on `merseya.ca` |
+| 1. Discovery & planning | Requirements, decisions, this plan | ✅ |
+| 2. Foundation | Working app skeleton, brand shell, database, catalogue scripts, first deploy | 🔄 |
+| 3. Storefront | Customers can browse products and fill a cart | ⬜ |
+| 4. Checkout & orders | Customers can pay (test mode); orders, stock and emails are correct | ⬜ |
+| 5. Orders admin | Client can see and fulfil orders herself | ⬜ |
+| 6. Hardening & launch | Tested, configured for production, live payments | ⬜ |
+| 7. Post-launch | Improvements based on real use (see §7.3) | ⬜ |
 
-**Go-live checklist (no launch until all are true):**
+---
+
+### Phase 1: Discovery & planning ✅
+Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
+
+### Phase 2: Foundation 🔄
+**Setup prerequisites**
+| Needed before | Setup | Who | Output to share with Claude | Status |
+|---|---|---|---|---|
+| 2.1 | GitHub repo + `gh` signed in | Developer | — | ✅ |
+| 2.4 | Neon project `Merseya` (AWS US East 2, Ohio), branches `production` and `dev` | Developer (business Gmail) | Branch names only; connection strings go into `.env` | ✅ |
+| 2.5 | Cloudinary account | Developer (business Gmail) | Cloud name; the API key and secret go into `.env` | ✅ |
+| 2.5 | Real photos and details for the first sample products | Client → developer | Photos stored locally (not committed) | ✅ photos ready |
+| 2.6 | Vercel account, GitHub connected in Authentication settings | Developer (business Gmail) | Team name | ✅ |
+
+**Tasks**
+| # | Task | Status |
+|---|---|---|
+| 2.1 | Scaffold Next.js 16 + TypeScript + Tailwind | ✅ |
+| 2.2 | Brand tokens, fonts, favicon, layout shell (announcement bar, header, footer), `(shop)` route group | ✅ |
+| 2.3 | Environment config: `.env.example` + Zod-validated env module | ✅ |
+| 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ✅ |
+| 2.5a | Catalogue file + schema, `catalog:sync` (validate → upload to Cloudinary → per-product transactions) and `stock:adjust`, `--prod` safeguard; 6 categories synced to `dev` | ✅ |
+| 2.5b | Load **placeholder** products for development and the client demo (`isPlaceholder: true`, sample names/prices, non-final photos). Real, verified details and final photos replace them before Phase 6; `catalog:sync --prod` refuses to run while any placeholder remains | ✅ |
+| 2.6 | Vercel import + first preview deploy; Preview env vars (Neon `dev`); `README.md`; start `docs/interview-notes.md` | 🔄 |
+
+- **Deliverable:** a preview URL showing the branded shell; the `dev` database holds the 6 categories and the sample products. One PR for the whole phase.
+- **Acceptance:** lint, type check and build pass; the app runs locally and on Vercel; `catalog:sync` is safe to re-run; no secrets in Git.
+- **Learn:** App Router structure, route groups, layouts, `next/font`, design tokens, env vars, Prisma migrations, relational modelling, Git branches and PRs.
+- **Interview:** *Why Postgres over MongoDB? Why store money as integer cents? What is a migration? Why does every product have a variant? What is a route group?*
+
+### Phase 3: Storefront ⬜
+**Setup prerequisites:** Cloudinary (done in Phase 2). Real sample products loaded (2.5).
+
+| # | Task |
+|---|---|
+| 3.1 | Homepage (hero, featured categories, best sellers, brand story, trust points) |
+| 3.2 | Collection pages `/collections/[slug]` with sort and an in-stock filter |
+| 3.3 | Product page: gallery, specs, ring size selector, stock state |
+| 3.4 | Cart (localStorage + server re-validation of prices and stock) |
+| 3.5 | Content pages (About, Shipping, Returns & Damage, Care, Ring Size Guide, FAQ, Contact, Privacy, Terms). Any copy not yet supplied by the client is clearly marked as a placeholder |
+
+- **Deliverable:** the catalogue and cart are browsable on the preview URL.
+- **Acceptance:** all categories can be browsed and products viewed and added to the cart on mobile and desktop; contrast meets WCAG AA; no invented claims.
+- **Learn:** Server vs Client Components, Cache Components (`"use cache"`), `next/image`, accessibility basics.
+- **Interview:** *What runs on the server and what runs in the browser? How does caching work in your app? Why isn't the cart in the database?*
+
+### Phase 4: Checkout & orders ⬜
+**Setup prerequisites**
+| Needed before | Setup | Who | Output to share with Claude |
+|---|---|---|---|
+| 4.1 | Stripe account, **country Canada**, test mode, 2FA (do **not** activate until the business is registered) | Client/developer (business Gmail) | Confirmation only; the test secret key goes into `.env` |
+| 4.2 | Stripe CLI installed locally | Claude (with approval) | — |
+| 4.5 | Resend account | Developer (business Gmail) | Confirmation; the API key goes into `.env` |
+| 4.1 | Provisional shipping rates (P2) | Client | Rates and delivery estimates |
+
+| # | Task |
+|---|---|
+| 4.1 | `startCheckout` Server Action: validate the cart, create a PENDING order, create the Stripe Checkout Session |
+| 4.2 | Webhook handler: signature check, idempotency, PAID transition, stock decrement, oversell flag |
+| 4.3 | Success page that reads order status from the DB |
+| 4.4 | Expired / refunded / disputed events |
+| 4.5 | Emails: customer confirmation and business new-order alert (Resend + React Email) |
+| 4.6 | Vitest integration tests for the webhook + the manual payment checklist (§17) |
+
+- **Deliverable:** paid test orders are recorded via webhook, with emails sent.
+- **Acceptance:** the full test-mode payment checklist passes; duplicate events have no extra effect; closing the tab after paying still produces a PAID order and its email.
+- **Learn:** webhooks, HMAC signatures, idempotency, transactions, conditional updates, race conditions.
+- **Interview:** *Walk through your payment flow. Why not trust the success page? How do you handle duplicate webhooks? What happens if two people buy the last item?*
+
+### Phase 5: Orders admin ⬜
+**Setup prerequisites:** a Google Cloud project with an OAuth client (Claude provides a guide). The Google account(s) allowed into the admin (P11).
+
+| # | Task |
+|---|---|
+| 5.1 | Auth.js with Google, email allowlist, protected `/admin` layout |
+| 5.2 | Orders list, order detail, printable packing slip |
+| 5.3 | `markOrderShipped` + shipped email |
+
+- **Deliverable:** the client can fulfil orders from `/admin`. If time is short, this phase may follow immediately after launch, using the email + Stripe dashboard fallback (§7.2).
+- **Acceptance:** only allowlisted accounts can reach admin pages or actions, even when calling an action directly.
+- **Learn:** authentication vs authorisation, OAuth, JWT sessions, defence in depth.
+- **Interview:** *How is the admin protected? Why check auth inside the action and not only in middleware?*
+
+### Phase 6: Hardening & launch ⬜
+**Setup prerequisites (launch blockers):**
+- business registered and Stripe activated (P8);
+- tax decision (P1);
+- domain `merseya.ca` (P7) and business email (P6);
+- Vercel Pro billing approved by the client (P15);
+- final policies (P4), shipping (P2), anti-tarnish wording (P3), business address (P5), site copy (P13);
+- full catalogue data (P12).
+
+| # | Task |
+|---|---|
+| 6.1 | Load the full catalogue and verify stock counts |
+| 6.2 | Test checklists, accessibility and mobile checks, Lighthouse |
+| 6.3 | Production env vars, domain + DNS, Resend domain verification (SPF/DKIM), live Stripe keys + live webhook |
+| 6.4 | Live low-value purchase → verify → refund → verify |
+| 6.5 | Go-live (all of §19 ticked) |
+
+- **Learn:** DNS, email deliverability, production vs preview configuration, monitoring.
+- **Interview:** *How did you deploy? How do you keep secrets safe? How would you know if payments broke?*
+
+### Phase 7: Post-launch ⬜
+Product/stock admin UI first, then the other features deferred in §7.3, prioritised by real business needs.
+
+## 19. Go-live checklist
+
+No launch until all are true:
+
 - [ ] Business registered; Stripe account activated and verified; payout bank account confirmed
 - [ ] Tax configuration decided with accountant and set in Stripe
 - [ ] Shipping rates, carrier and delivery estimates final and shown on site + Checkout
@@ -414,17 +494,18 @@ Capacity: **~15 h/week** (exams) ≈ **55 hours** until launch. Estimated full s
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| Business registration / Stripe verification delayed | Medium | Can't take payments on Dec 15 | Client creates Stripe account now (test mode); checkout-disabled fallback |
-| Developer time (exams, 15 h/week) | High | Scope slips | Admin may slip; strict MVP; no new features before launch |
-| Photos/data late (> Dec 3) | Medium | No launch | Agree deadline with client; launch with fewer products if needed |
+| Business registration / Stripe verification delayed | Medium | Can't take payments at launch | Client creates Stripe account now (test mode); checkout-disabled fallback |
+| Developer time (exams) | High | Scope slips | Admin may follow launch; strict MVP; no new features before launch |
+| Photos/data late | Medium | No launch | Real photos already supplied; launch with fewer products if needed |
 | Webhook bugs → paid orders not recorded | Low | High | Idempotent design, integration tests, Stripe failed-webhook alerts, Stripe dashboard as backup record |
 | Oversell of last unit | Low | Low | Accepted + flagged; reorder or refund |
 | Wrong production data via scripts | Medium | Medium | Zod validation, `--prod` flag + confirmation, Git history, PITR |
 | Misleading product claims | Medium | Legal/trust | Structured specs, reviewed wording, no invented claims |
 | Disputes/chargebacks | Low | Fees + loss | Clear policy, terms checkbox, tracked shipping, unboxing evidence |
-| Holiday shipping cut-offs | High | Customer complaints | Show delivery estimates and Christmas cut-off notice |
+| Holiday shipping cut-offs | High | Customer complaints | Show delivery estimates and a holiday cut-off notice |
 | Next.js caching surprises | Medium | Stale prices/stock shown | Stock/price always re-checked at checkout; explicit revalidation |
 | Client home address exposure | Medium | Privacy | Ask advisor about required business address; consider PO box |
+| `npm audit`: 3 high (ReDoS in `effect`, pulled in only by the Prisma **CLI** dev tool) | Low | None at runtime: not in the deployed app | Re-check on each Prisma upgrade; never "fix" by downgrading to Prisma 6 |
 
 ## 21. Learning objectives (developer)
 
@@ -456,23 +537,25 @@ Maintained in **`docs/interview-notes.md`** (created in Phase 2), updated after 
 
 ## 23. Open questions & pending decisions
 
-| # | Item | Owner | Needed by |
+| # | Item | Owner | Needed before |
 |---|---|---|---|
-| P1 | GST/HST registration & tax configuration (Stripe Tax on/off) | Client + accountant | Dec 9 |
-| P2 | Shipping carrier/service, flat rate(s), free-shipping threshold, delivery estimates, holiday cut-off | Client | Dec 3 |
-| P3 | Anti-tarnish wording + supplier coating details | Client + supplier | Dec 5 |
-| P4 | Final policy texts (returns/damage, shipping, privacy, terms), claim window (48 vs 72 h) | Client (+ advisor) | Dec 8 |
-| P5 | Business address shown on site / return address (PO box?) | Client (+ advisor) | Dec 8 |
-| P6 | Business email provider (Google Workspace / Zoho) + addresses (orders@, hello@) | Client | Dec 5 |
-| P7 | Domain `merseya.ca` purchase (in business/client name) | Client | Dec 5 |
-| P8 | Stripe account creation (now, test mode) → activation after registration | Client | Create now; activate ~Dec 5 |
-| P9 | Vercel team (business-owned, Pro) | Client + developer | Dec 1 |
-| P10 | ~~Logo files~~ ✅ Received 2026-11-19 (transparent PNGs, final) | — | — |
-| P11 | Google account(s) allowed into admin | Client | Dec 8 |
-| P12 | Product data + photos for ~20 products, ring sizes per ring (4–6 early sample photos promised for 2026-11-20 to design with) | Client + developer | Dec 3 |
-| P13 | Announcement bar text, social links, About-us story text | Client | Dec 5 |
-| P14 | ~~Confirm tech choices~~ ✅ Confirmed 2026-11-19 | — | — |
-| P15 | Vercel Pro billing starts at first deploy (~Nov 26, ~US$20/month) — client informed? | Client | Nov 26 |
+| P1 | GST/HST registration & tax configuration (Stripe Tax on/off) | Client + accountant | Phase 6 |
+| P2 | Shipping carrier/service, flat rate(s), free-shipping threshold, delivery estimates, holiday cut-off | Client | Phase 4 (provisional), Phase 6 (final) |
+| P3 | Anti-tarnish wording + supplier coating details | Client + supplier | Task 3.3 (provisional), Phase 6 (final) |
+| P4 | Final policy texts (returns/damage, shipping, privacy, terms), claim window (48 vs 72 h) | Client (+ advisor) | Task 3.5 (draft), Phase 6 (final) |
+| P5 | Business address shown on site / return address (PO box?) | Client (+ advisor) | Phase 6 (and Stripe activation) |
+| P6 | Business email provider (Google Workspace / Zoho) + addresses (orders@, hello@) | Client | Phase 6 |
+| P7 | Domain `merseya.ca` purchase (in business/client name) | Client | Phase 6 |
+| P8 | Stripe account: create in test mode → activate after registration | Client | Phase 4 (test), Phase 6 (live) |
+| P9 | Vercel account (business-owned) | Developer | Task 2.6 |
+| P10 | ~~Logo files~~ ✅ Received (transparent PNGs, final) | — | — |
+| P11 | Google account(s) allowed into admin | Client | Phase 5 |
+| P12 | Product data + photos: sample products ✅ ready; full catalogue (~20 products, ring sizes per ring) | Client + developer | Task 2.5 (samples), Phase 6 (full) |
+| P13 | Announcement bar text, social links, About-us story text | Client | Task 3.5 (draft), Phase 6 (final) |
+| P14 | ~~Confirm tech choices~~ ✅ Confirmed | — | — |
+| P15 | Vercel Pro billing (~US$20/month) approved by the client | Client | Task 2.6 (start Pro trial), Phase 6 (paid) |
+| P17 | Production deployments before launch: point Vercel Production at the Neon `production` branch (tables migrated, empty catalogue) and decide how migrations reach production (manual `db:deploy` vs in the build). Must be settled before the first Phase 3 merge that reads the database during the build | Developer | Phase 3 (before first DB-reading merge) |
+| P16 | Optional extra logo files: wordmark-only lockup ("Merseya / JEWELLERY" without monogram, plum + blush, transparent) for a compact header | Client/designer | Phase 3 |
 
 ## 24. Development workflow
 

@@ -44,3 +44,9 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# --- Generated Prisma client (rebuilt by `prisma generate`) ---
+src/generated/
+
+# --- Product photos: uploaded to Cloudinary, kept out of Git ---
+catalog/photos/

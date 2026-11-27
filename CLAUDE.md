@@ -1,6 +1,12 @@
 # CLAUDE.md: instructions for Claude Code sessions on Merseya
 
 Merseya Jewellery is a real e-commerce store for an Ontario jewellery business: Next.js full-stack, TypeScript, PostgreSQL (Neon) with Prisma, and Stripe Checkout, hosted on Vercel.
+@AGENTS.md
+
+**Next.js version:** 16.4 with `cacheComponents` enabled, which may differ from your training data. Check the bundled docs in `node_modules/next/dist/docs/` before writing Next.js code. `AGENTS.md` is maintained by `next dev`; never edit it by hand.
+
+**Progress is tracked by phase and task IDs (`plan.md` §18), never by dates.** Before a task that needs an external service, remind the developer of that phase's setup prerequisites.
+
 **`plan.md` is the source of truth** for scope, architecture, schema, roadmap and open decisions. Read the relevant section before starting a task, and update `plan.md` when a decision changes. Don't duplicate it here.
 
 ---
@@ -31,24 +37,68 @@ The developer is a final-year CS student building their first production app. Le
 - Server Components by default. Add `"use client"` only for interactive pieces.
 - Server Actions handle mutations from our own UI; Route Handlers handle external callers (the Stripe webhook, Auth.js).
 - Business logic lives in `src/server/`, server-only. Shared helpers live in `src/lib/`.
-- Use brand tokens (plum, rose, blush, ivory, deep-plum, charcoal) instead of raw hex values in components. Rose is not for body text, because its contrast is too low.
+- Colours only through the design tokens in `src/app/globals.css` (`@theme`). Never hard-code hex values in components. See §4 for brand rules.
 - Use logos from `public/images/brand/` as supplied. Never recolour or redraw them.
 - File names in kebab-case; React components in PascalCase.
 
-## 4. Git workflow: the developer runs Git, Claude does not
+## 4. Brand & visual direction
+
+**Aesthetic:** contemporary Indian elegance + feminine editorial design + approachable luxury. Merseya is a **plum, blush-pink and ivory** brand, **not** a plum website with pink accents. Visitors should recognise both plum and pink immediately.
+- Plum gives sophistication.
+- Blush pink gives warmth and femininity.
+- Ivory gives elegance and breathing space.
+- Champagne gold is a subtle jewellery-inspired finishing touch.
+
+**Approved palette.** These are the only brand colours. Never invent new shades. Opacity variants of these tokens (for example `bg-blush/60`) are allowed.
+| Token | HEX | Role | Rough share of the page |
+|---|---|---|---|
+| `ivory` | #F7F3EF | Main neutral background | ~35% |
+| `blush` | #F0DDE1 | Feminine backgrounds and highlights: section bands, panels, badges | ~25% |
+| `rose` | #B77D84 | Secondary accent: borders, underlines, hover states, icons, large display accents | ~15% |
+| `plum` | #683844 | Primary brand colour: headings, links, icons | ~15% |
+| `deep-plum` | #422133 | Primary CTAs, footer, campaign sections; strong contrast | ~7% |
+| `charcoal` | #30272B | Body text | — |
+| `champagne` | #C6A477 | **Restrained** accent: hairlines, small icons, delicate details | ~3% |
+
+The proportions are a guide, not a rule.
+
+**Blush must have real visual presence.** Alternate ivory and blush section backgrounds for a deliberate rhythm. Use blush for panels, badges, hover states and the mobile menu. **Product photography always stays the focal point:** no pink behind photos that competes with the jewellery. Make the site more beautiful by balancing colours, not by making everything pink.
+
+**Contrast rules (measured, WCAG AA):**
+- Body text: `charcoal` or `plum` on `ivory`/`blush`; `ivory`/`blush`/`champagne` on `deep-plum`.
+- `rose` is never used for small text. It reaches only 3.0:1 on ivory (large text and UI lines only) and 2.6:1 on blush (decorative only). Text on a `rose` background must be large.
+- `champagne` is decorative only on light backgrounds (2.1:1 on ivory). It may be text **only on `deep-plum`** (6.0:1).
+
+**Avoid:**
+- childish or "girly" pink, and excessive decoration;
+- bubbly rounded components and lots of pill-shaped buttons;
+- decorative lines around headings;
+- heavy shadows, excessive gradients, metallic or shiny gold effects;
+- too many competing accents, unnecessary animation;
+- generic AI-style ornaments and generic templates.
+
+**Prefer:**
+- generous whitespace and elegant editorial typography (Cormorant Garamond for display, DM Sans for body text);
+- refined product grids;
+- subtle transitions;
+- a look that is intentionally art-directed.
+
+**Process:** discuss substantial visual changes with the developer before implementing them.
+
+## 5. Git workflow: the developer runs Git, Claude does not
 
 The developer manages **all** Git and GitHub operations personally, to learn professional version control.
 
-### 4.1 Forbidden for Claude
+### 5.1 Forbidden for Claude
 Never run Git or GitHub commands that change local or remote state, including:
 `git add`, `git commit`, `git push`, `git pull`, `git merge`, `git rebase`, `git checkout`, `git switch`, `git reset`, `git cherry-pick`, `git stash`, `git branch -d`/`-D` (or any branch creation), `git tag`, `gh pr create`, `gh pr merge`, and any `gh` command that creates or changes something.
 Never change Git config or remotes without discussing it first. If a Git operation is needed, explain it and give the exact command; the developer runs it.
 
-### 4.2 Allowed (read-only, only when needed)
+### 5.2 Allowed (read-only, only when needed)
 `git status`, `git branch`, `git log`, `git diff`, `git remote -v`, `git show`, `gh pr view`, `gh repo view`.
 **Always check the current branch with `git status` before writing a handoff.** Never assume or invent a branch name.
 
-### 4.3 Branching model
+### 5.3 Branching model
 1. Start from an up-to-date `main`.
 2. Create a feature branch.
 3. Implement, test and review.
@@ -64,7 +114,7 @@ Never change Git config or remotes without discussing it first. If a Git operati
 - If the developer is already on a suitable feature branch, don't suggest a new one.
 - The developer pushes after every change, even small ones. Every recommended commit must be coherent and verified. **Never recommend committing broken or untested work.** Say what must be fixed or tested first.
 
-### 4.4 Required ending for every coding task: GIT HANDOFF
+### 5.4 Required ending for every coding task: GIT HANDOFF
 
 Every meaningful coding or documentation task ends with this section:
 
