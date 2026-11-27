@@ -377,7 +377,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | 2.4 | Neon project `Merseya` (AWS US East 2, Ohio), branches `production` and `dev` | Developer (business Gmail) | Branch names only; connection strings go into `.env` | ✅ |
 | 2.5 | Cloudinary account | Developer (business Gmail) | Cloud name; the API key and secret go into `.env` | ✅ |
 | 2.5 | Real photos and details for the first sample products | Client → developer | Photos stored locally (not committed) | ✅ photos ready |
-| 2.6 | Vercel account, GitHub connected in Authentication settings | Developer (business Gmail) | Team name | ⬜ |
+| 2.6 | Vercel account, GitHub connected in Authentication settings | Developer (business Gmail) | Team name | ✅ |
 
 **Tasks**
 | # | Task | Status |
@@ -388,7 +388,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ✅ |
 | 2.5a | Catalogue file + schema, `catalog:sync` (validate → upload to Cloudinary → per-product transactions) and `stock:adjust`, `--prod` safeguard; 6 categories synced to `dev` | ✅ |
 | 2.5b | Load **placeholder** products for development and the client demo (`isPlaceholder: true`, sample names/prices, non-final photos). Real, verified details and final photos replace them before Phase 6; `catalog:sync --prod` refuses to run while any placeholder remains | ✅ |
-| 2.6 | Vercel import + first preview deploy; `README.md`; start `docs/interview-notes.md` | ⬜ |
+| 2.6 | Vercel import + first preview deploy; Preview env vars (Neon `dev`); `README.md`; start `docs/interview-notes.md` | 🔄 |
 
 - **Deliverable:** a preview URL showing the branded shell; the `dev` database holds the 6 categories and the sample products. One PR for the whole phase.
 - **Acceptance:** lint, type check and build pass; the app runs locally and on Vercel; `catalog:sync` is safe to re-run; no secrets in Git.
@@ -554,6 +554,7 @@ Maintained in **`docs/interview-notes.md`** (created in Phase 2), updated after 
 | P13 | Announcement bar text, social links, About-us story text | Client | Task 3.5 (draft), Phase 6 (final) |
 | P14 | ~~Confirm tech choices~~ ✅ Confirmed | — | — |
 | P15 | Vercel Pro billing (~US$20/month) approved by the client | Client | Task 2.6 (start Pro trial), Phase 6 (paid) |
+| P17 | Production deployments before launch: point Vercel Production at the Neon `production` branch (tables migrated, empty catalogue) and decide how migrations reach production (manual `db:deploy` vs in the build). Must be settled before the first Phase 3 merge that reads the database during the build | Developer | Phase 3 (before first DB-reading merge) |
 | P16 | Optional extra logo files: wordmark-only lockup ("Merseya / JEWELLERY" without monogram, plum + blush, transparent) for a compact header | Client/designer | Phase 3 |
 
 ## 24. Development workflow
