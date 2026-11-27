@@ -387,7 +387,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | 2.3 | Environment config: `.env.example` + Zod-validated env module | ✅ |
 | 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ✅ |
 | 2.5a | Catalogue file + schema, `catalog:sync` (validate → upload to Cloudinary → per-product transactions) and `stock:adjust`, `--prod` safeguard; 6 categories synced to `dev` | ✅ |
-| 2.5b | Load the client's first real products (photos + verified details) | ⬜ |
+| 2.5b | Load **placeholder** products for development and the client demo (`isPlaceholder: true`, sample names/prices, non-final photos). Real, verified details and final photos replace them before Phase 6; `catalog:sync --prod` refuses to run while any placeholder remains | 🔄 |
 | 2.6 | Vercel import + first preview deploy; `README.md`; start `docs/interview-notes.md` | ⬜ |
 
 - **Deliverable:** a preview URL showing the branded shell; the `dev` database holds the 6 categories and the sample products. One PR for the whole phase.

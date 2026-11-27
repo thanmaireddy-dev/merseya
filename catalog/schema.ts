@@ -57,6 +57,10 @@ export const productSchema = z
     weightGrams: z.number().positive().optional(),
     careNotes: optionalText,
     contents: z.array(z.string().trim().min(1)).optional(), // mystery boxes
+    // true = sample content for development and client demos. `catalog:sync --prod`
+    // refuses to run while ANY placeholder remains, so sample data can't reach
+    // the live store.
+    isPlaceholder: z.boolean().default(false),
     isFeatured: z.boolean().default(false),
     isActive: z.boolean().default(true),
     images: z.array(imageSchema).min(1),

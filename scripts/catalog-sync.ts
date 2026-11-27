@@ -15,7 +15,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { products as rawProducts } from "../catalog/products";
 import { productSchema, type Product } from "../catalog/schema";
 import { categories } from "../src/lib/site-config";
-import { loadScriptEnv, requireVar } from "./lib/script-env";
+import { isProd, loadScriptEnv, requireVar } from "./lib/script-env";
 
 const PHOTOS_DIR = path.join("catalog", "photos");
 const MAX_BYTES = 10 * 1024 * 1024; // Cloudinary free-plan limit per image
@@ -58,6 +58,19 @@ function validateCatalogue(): Product[] {
     process.exit(1);
   }
   console.log(`✔ Catalogue valid: ${valid.length} product(s).`);
+
+  const placeholders = valid.filter((p) => p.isPlaceholder).map((p) => p.slug);
+  if (placeholders.length && isProd) {
+    console.error(
+      `✖ Refusing to sync to PRODUCTION: ${placeholders.length} placeholder product(s) remain:\n` +
+        placeholders.map((s) => `  - ${s}`).join("\n") +
+        `\nReplace them with real, verified details (and remove isPlaceholder).`,
+    );
+    process.exit(1);
+  }
+  if (placeholders.length) {
+    console.log(`ℹ ${placeholders.length} placeholder product(s): fine for dev, blocked for --prod.`);
+  }
   return valid;
 }
 
