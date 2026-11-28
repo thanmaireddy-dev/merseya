@@ -403,8 +403,8 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | # | Task |
 |---|---|
 | 3.0a | Database-target guard: `EnvironmentMarker` table (CHECK constraints), `db:mark`, checks in `catalog:sync` / `stock:adjust` ✅ |
-| 3.0b | Production database: `.env.prod`, `db:deploy`, `db:mark -- production --prod`, Vercel Production env vars (P17) |
-| 3.0c | Data layer (catalogue queries), Cloudinary image URL helper, `ProductCard` component |
+| 3.0b | Production database: `.env.prod`, `db:deploy`, `db:mark -- production --prod`, Vercel Production env vars (P17) ✅ |
+| 3.0c | Data layer `src/server/catalogue.ts` (cached, tag `catalogue`), Cloudinary loader via `CloudinaryImage` (Cloudinary resizes, not Vercel), `ProductCard` (4:5, stock badges), temporary `/dev/products` preview ✅ |
 | 3.1 | Homepage (hero, featured categories, best sellers, brand story, trust points) |
 | 3.2 | Collection pages `/collections/[slug]` with sort and an in-stock filter |
 | 3.3 | Product page: gallery, specs, ring size selector, stock state |
@@ -428,7 +428,7 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | # | Task |
 |---|---|
 | 4.1 | `startCheckout` Server Action: validate the cart, create a PENDING order, create the Stripe Checkout Session |
-| 4.2 | Webhook handler: signature check, idempotency, PAID transition, stock decrement, oversell flag |
+| 4.2 | Webhook handler: signature check, idempotency, PAID transition, stock decrement, oversell flag, then `revalidateTag("catalogue")` so stock badges update immediately (cached catalogue otherwise lags up to an hour) |
 | 4.3 | Success page that reads order status from the DB |
 | 4.4 | Expired / refunded / disputed events |
 | 4.5 | Emails: customer confirmation and business new-order alert (Resend + React Email) |
