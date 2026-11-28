@@ -5,6 +5,8 @@
 import { existsSync } from "node:fs";
 import { defineConfig } from "prisma/config";
 
+// loadEnvFile never overrides variables that are already set. That is what lets
+// `npm run db:deploy -- --prod` (scripts/db-deploy.ts) load .env.prod first.
 if (existsSync(".env")) process.loadEnvFile(".env");
 
 export default defineConfig({

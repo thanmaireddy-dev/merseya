@@ -166,6 +166,18 @@ model OrderItem {
   @@index([orderId])
 }
 
+// ─── Safety ─────────────────────────────────────────────────────────────────
+
+// One row per database saying which environment it is ("dev" or "production").
+// Developer scripts refuse to write unless it matches what they expect, so a
+// wrong connection string can't send dev data to production (or the reverse).
+// Set once per Neon branch with `npm run db:mark`.
+model EnvironmentMarker {
+  id       Int      @id @default(1) // always 1: there is only ever one row
+  name     String // "dev" | "production"
+  markedAt DateTime @default(now())
+}
+
 // Log of Stripe webhook events we have processed: duplicate protection + audit trail.
 model StripeEvent {
   id         String   @id // Stripe's event id, e.g. "evt_..."

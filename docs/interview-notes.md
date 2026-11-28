@@ -76,4 +76,8 @@ Concepts behind Merseya's design, written so you can explain them **without note
 - `--prod` scripts load a separate `.env.prod` and require typing `PRODUCTION`.
 - `catalog:sync --prod` **refuses** to run while any placeholder product exists.
 - Why `.env.prod` and not `.env.production`: Next.js auto-loads `.env.production` during `next build`, so a local build could touch the live database.
-- **Lesson learned:** a guard is only as good as its assumption. Copying the wrong Neon connection string would have pointed "dev" at production. A check that verifies the target database is planned.
+- **Lesson learned:** a guard is only as good as its assumption. Copying the wrong Neon connection string would have pointed "dev" at production.
+- **Fix: environment markers.** Each database stores its own identity in a one-row `EnvironmentMarker` table. Scripts compare it with what they expect and **fail safe**: a branch copied from production carries the "production" marker, so dev scripts refuse it. Re-labelling needs `--force` plus typing the database's endpoint id.
+- **CHECK constraints:** Prisma can't express them, so they're hand-written in the migration SQL. The *database* rejects a second row or an invalid name, even if our code has a bug.
+- **Q: How do schema changes reach production?**
+  A: Migrations are SQL files in Git. Before merging a PR that adds one, I apply it to production with `prisma migrate deploy` as an explicit release step. It's a deliberate, visible action rather than something hidden in the build.

@@ -15,6 +15,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { products as rawProducts } from "../catalog/products";
 import { productSchema, type Product } from "../catalog/schema";
 import { categories } from "../src/lib/site-config";
+import { assertDatabaseTarget, expectedEnvironment } from "./lib/db-target";
 import { isProd, loadScriptEnv, requireVar } from "./lib/script-env";
 
 const PHOTOS_DIR = path.join("catalog", "photos");
@@ -123,6 +124,8 @@ async function main() {
   });
   // Imported only now: db.ts validates env vars the moment it loads.
   const { db } = await import("../src/lib/db");
+  // Is this REALLY the database we mean to write to? (see scripts/lib/db-target.ts)
+  await assertDatabaseTarget(db, expectedEnvironment(isProd));
 
   // Categories come from site-config.ts, the same list the menu uses.
   const categoryIds = new Map<string, string>();

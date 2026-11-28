@@ -60,12 +60,13 @@ docs/               brand assets, interview notes
 | `npm run build` / `npm start` | Production build / serve it |
 | `npm run lint` · `npm run typecheck` | ESLint · route types + TypeScript check |
 | `npm run db:migrate` | Create/apply migrations on the dev database |
-| `npm run db:deploy` | Apply existing migrations (non-interactive, for production) |
+| `npm run db:deploy` | Apply committed migrations with a marker check; `-- --prod` = the production release step (uses `.env.prod`) |
 | `npm run db:studio` | Browse the dev database in Prisma Studio |
+| `npm run db:mark -- dev` | Label a database as dev or production, once per Neon branch (`-- production --prod` for production) |
 | `npm run catalog:sync` | Validate `catalog/products.ts`, upload new photos, update the dev DB. `-- --check` validates only |
 | `npm run stock:adjust -- <SKU> <+n\|-n\|=n>` | Change one variant's stock |
 
-Adding `--prod` to the catalogue and stock scripts targets production: it uses `.env.prod` and asks for typed confirmation. `catalog:sync --prod` refuses to run while any placeholder product remains. See [`catalog/README.md`](catalog/README.md).
+Adding `--prod` to the catalogue and stock scripts targets production: it uses `.env.prod` and asks for typed confirmation. `catalog:sync --prod` refuses to run while any placeholder product remains. Every script also checks the database's **environment marker** and refuses to write if the database isn't the one it expects (`dev` normally, `production` with `--prod`). See [`catalog/README.md`](catalog/README.md).
 
 ## Environments
 
@@ -73,7 +74,9 @@ Adding `--prod` to the catalogue and stock scripts targets production: it uses `
 |---|---|---|
 | Local | Neon `dev` branch | `.env` (git-ignored) |
 | Vercel Preview | Neon `dev` branch | Vercel → Settings → Environment Variables (Preview) |
-| Vercel Production | Neon `production` branch | Vercel (Production), configured at launch (Phase 6) |
+| Vercel Production | Neon `production` branch | Vercel → Settings → Environment Variables (Production) |
+
+**Release step for schema changes:** before merging a PR that adds a migration, apply it to production with `npm run db:deploy` (using `.env.prod`).
 
 Cloudinary's API key and secret are only needed by `catalog:sync` on a developer machine. They are **not** configured on Vercel.
 

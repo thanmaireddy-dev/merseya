@@ -357,8 +357,8 @@ Status: ✅ done · 🔄 in progress · ⬜ not started
 | Phase | Goal | Status |
 |---|---|---|
 | 1. Discovery & planning | Requirements, decisions, this plan | ✅ |
-| 2. Foundation | Working app skeleton, brand shell, database, catalogue scripts, first deploy | 🔄 |
-| 3. Storefront | Customers can browse products and fill a cart | ⬜ |
+| 2. Foundation | Working app skeleton, brand shell, database, catalogue scripts, first deploy | ✅ |
+| 3. Storefront | Customers can browse products and fill a cart | 🔄 |
 | 4. Checkout & orders | Customers can pay (test mode); orders, stock and emails are correct | ⬜ |
 | 5. Orders admin | Client can see and fulfil orders herself | ⬜ |
 | 6. Hardening & launch | Tested, configured for production, live payments | ⬜ |
@@ -369,7 +369,7 @@ Status: ✅ done · 🔄 in progress · ⬜ not started
 ### Phase 1: Discovery & planning ✅
 Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 
-### Phase 2: Foundation 🔄
+### Phase 2: Foundation ✅
 **Setup prerequisites**
 | Needed before | Setup | Who | Output to share with Claude | Status |
 |---|---|---|---|---|
@@ -388,18 +388,23 @@ Deliverable: the approved `plan.md`, `CLAUDE.md`, and the GitHub repo connected.
 | 2.4 | Prisma + Neon: schema from §10, first migration on `dev` | ✅ |
 | 2.5a | Catalogue file + schema, `catalog:sync` (validate → upload to Cloudinary → per-product transactions) and `stock:adjust`, `--prod` safeguard; 6 categories synced to `dev` | ✅ |
 | 2.5b | Load **placeholder** products for development and the client demo (`isPlaceholder: true`, sample names/prices, non-final photos). Real, verified details and final photos replace them before Phase 6; `catalog:sync --prod` refuses to run while any placeholder remains | ✅ |
-| 2.6 | Vercel import + first preview deploy; Preview env vars (Neon `dev`); `README.md`; start `docs/interview-notes.md` | 🔄 |
+| 2.6 | Vercel import + first preview deploy; Preview env vars (Neon `dev`); `README.md`; start `docs/interview-notes.md` | ✅ |
 
 - **Deliverable:** a preview URL showing the branded shell; the `dev` database holds the 6 categories and the sample products. One PR for the whole phase.
 - **Acceptance:** lint, type check and build pass; the app runs locally and on Vercel; `catalog:sync` is safe to re-run; no secrets in Git.
 - **Learn:** App Router structure, route groups, layouts, `next/font`, design tokens, env vars, Prisma migrations, relational modelling, Git branches and PRs.
 - **Interview:** *Why Postgres over MongoDB? Why store money as integer cents? What is a migration? Why does every product have a variant? What is a route group?*
 
-### Phase 3: Storefront ⬜
-**Setup prerequisites:** Cloudinary (done in Phase 2). Real sample products loaded (2.5).
+### Phase 3: Storefront 🔄
+**Setup prerequisites:** Cloudinary ✅. Placeholder products loaded ✅. **Before the first PR that reads the database during the build:** production database set up (task 3.0b).
+
+**Build order** (dependency order; one branch + PR per task): 3.0 → 3.2 → 3.3 → 3.1 → 3.4 → 3.5. The client demo is possible after 3.1.
 
 | # | Task |
 |---|---|
+| 3.0a | Database-target guard: `EnvironmentMarker` table (CHECK constraints), `db:mark`, checks in `catalog:sync` / `stock:adjust` ✅ |
+| 3.0b | Production database: `.env.prod`, `db:deploy`, `db:mark -- production --prod`, Vercel Production env vars (P17) |
+| 3.0c | Data layer (catalogue queries), Cloudinary image URL helper, `ProductCard` component |
 | 3.1 | Homepage (hero, featured categories, best sellers, brand story, trust points) |
 | 3.2 | Collection pages `/collections/[slug]` with sort and an in-stock filter |
 | 3.3 | Product page: gallery, specs, ring size selector, stock state |
@@ -554,7 +559,7 @@ Maintained in **`docs/interview-notes.md`** (created in Phase 2), updated after 
 | P13 | Announcement bar text, social links, About-us story text | Client | Task 3.5 (draft), Phase 6 (final) |
 | P14 | ~~Confirm tech choices~~ ✅ Confirmed | — | — |
 | P15 | Vercel Pro billing (~US$20/month) approved by the client | Client | Task 2.6 (start Pro trial), Phase 6 (paid) |
-| P17 | Production deployments before launch: point Vercel Production at the Neon `production` branch (tables migrated, empty catalogue) and decide how migrations reach production (manual `db:deploy` vs in the build). Must be settled before the first Phase 3 merge that reads the database during the build | Developer | Phase 3 (before first DB-reading merge) |
+| P17 | ✅ **Decided:** Vercel Production uses the Neon `production` branch (tables migrated, catalogue empty until launch). Migrations reach production by a **manual release step**: the developer runs `npm run db:deploy` with `.env.prod` before merging any PR that changes the schema | — | Task 3.0b |
 | P16 | Optional extra logo files: wordmark-only lockup ("Merseya / JEWELLERY" without monogram, plum + blush, transparent) for a compact header | Client/designer | Phase 3 |
 
 ## 24. Development workflow
