@@ -81,3 +81,27 @@ Concepts behind Merseya's design, written so you can explain them **without note
 - **CHECK constraints:** Prisma can't express them, so they're hand-written in the migration SQL. The *database* rejects a second row or an invalid name, even if our code has a bug.
 - **Q: How do schema changes reach production?**
   A: Migrations are SQL files in Git. Before merging a PR that adds one, I apply it to production with `prisma migrate deploy` as an explicit release step. It's a deliberate, visible action rather than something hidden in the build.
+
+---
+
+## Phase 3: Storefront
+
+### 14. Data-access layer
+- **What:** Pages call `src/server/catalogue.ts` (`getCollection`, `getFeaturedProducts`) instead of querying Prisma directly.
+- **Why:** The rules live in one place: only active products are shown; price ("From $X") and stock state are computed on the server; pages receive plain, display-ready objects. `import "server-only"` turns any accidental import into browser code into a **build error**.
+
+### 15. Caching and stale data
+- **Merseya:** Catalogue reads use `"use cache"` + `cacheLife("hours")` + `cacheTag("catalogue")`. At build time the dev preview page was **prerendered as static HTML** (revalidate 1h): the database is read once, then the page is served instantly.
+- **Trade-off we saw in testing:** after changing stock with a script, the badges stayed stale until the cache was refreshed.
+- **Q: Isn't showing stale stock dangerous?**
+  A: Displayed stock is informational. Checkout always re-reads price and stock from the database before taking payment. When a sale reduces stock (in the Stripe webhook), we'll call `revalidateTag("catalogue")`, so badges update immediately.
+
+### 16. Image delivery (Cloudinary loader)
+- **What:** `next/image` normally sends remote photos through Vercel's optimiser: Cloudinary → Vercel → browser, resized twice and counted against Vercel's quota.
+- **Merseya:** A `CloudinaryImage` client component gives `next/image` a **loader** that only *builds* Cloudinary URLs (`c_fill,g_auto,ar_4:5,w_640/f_auto,q_auto`). Cloudinary crops, resizes, picks WebP/AVIF and compresses. Next.js still generates the responsive `srcset`. Logos keep the default optimiser.
+- **Why a Client Component:** a loader is a function, and functions can't be passed from Server Components to the browser.
+- **Debugging story:** `img.naturalWidth` showed 256 while 384px images were downloaded. With `srcset` `w` descriptors, browsers report a **density-corrected** size. We confirmed the real 384×480 by fetching the URL directly.
+
+### 17. Core Web Vitals: LCP
+- **LCP (Largest Contentful Paint)** = when the biggest above-the-fold element appears. The dev server flagged a product photo as the LCP element, so the first row of cards now uses `loading="eager"` while the rest stay lazy.
+- Next 16 deprecated `priority` on images in favour of `preload`. The header logo uses `preload`.
