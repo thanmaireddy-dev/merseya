@@ -20,7 +20,7 @@ export function SiteHeader() {
           <Image
             src={logo}
             alt="Merseya Jewellery, home"
-            priority
+            preload // Next 16: replaces the deprecated `priority` prop
             className="h-16 w-auto md:h-24"
             sizes="(min-width: 768px) 108px, 72px"
           />
