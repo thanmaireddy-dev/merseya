@@ -9,7 +9,8 @@
 // processed at the same moment can't be lost. "=n" overwrites the value, so
 // use it only after counting what's physically on the shelf.
 
-import { loadScriptEnv } from "./lib/script-env";
+import { assertDatabaseTarget, expectedEnvironment } from "./lib/db-target";
+import { isProd, loadScriptEnv } from "./lib/script-env";
 
 const [sku, change] = process.argv.slice(2).filter((a) => a !== "--prod");
 const match = change?.match(/^([+-]|=)(\d+)$/);
@@ -24,6 +25,7 @@ const amount = Number(digits);
 async function main() {
   await loadScriptEnv(`change stock of ${sku}`);
   const { db } = await import("../src/lib/db");
+  await assertDatabaseTarget(db, expectedEnvironment(isProd));
 
   const before = await db.variant.findUnique({
     where: { sku },
